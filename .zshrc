@@ -1,4 +1,4 @@
-PROMPT="%B%n : %b%F{green}(%~)%f $ "
+PROMPT="%B%n : %b%F{cyan}(%~)%f $ "
 
 alias ls='ls -G'
-export EDITOR='vim'
+export EDITOR='nvim'
