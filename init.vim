@@ -56,6 +56,8 @@ let g:fzf_colors = {
 let g:netrw_banner = 0
 let g:netrw_browse_split = 0
 
+inoremap jj <Esc>
+
 let mapleader = " "
 
 nmap <leader>gd <Plug>(coc-definition)
