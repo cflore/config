@@ -54,7 +54,7 @@ let g:fzf_colors = {
 \ 'header':  ['fg', 'Comment'] }
 
 let g:netrw_banner = 0
-let g:newrw_browse_split = 0
+let g:netrw_browse_split = 0
 
 let mapleader = " "
 
