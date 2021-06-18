@@ -21,65 +21,62 @@ set updatetime=50
 set colorcolumn=80
 set termguicolors
 set shortmess+=c
+set background=dark
 set completeopt=menuone,noinsert,noselect
 
 call plug#begin('~/.vim/plugged')
-Plug 'gruvbox-community/gruvbox'
+
+Plug 'morhetz/gruvbox'
+
+" lsp
+Plug 'neovim/nvim-lspconfig'
+Plug 'glepnir/lspsaga.nvim'
+Plug 'hrsh7th/nvim-compe'
+Plug 'simrat39/symbols-outline.nvim'
+
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+
+" telescope requirements...
+Plug 'nvim-lua/popup.nvim'
+Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-telescope/telescope.nvim'
+Plug 'nvim-telescope/telescope-fzy-native.nvim'
+
+" debugging
+Plug 'puremourning/vimspector'
+Plug 'szw/vim-maximizer'
+
+Plug 'preservim/nerdtree'
 Plug 'mbbill/undotree'
-Plug 'junegunn/fzf', {'do': { -> fzf#install() } }
-Plug 'junegunn/fzf.vim'
-Plug 'stsewd/fzf-checkout.vim'
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'tpope/vim-fugitive'
-Plug 'vim-airline/vim-airline'
+
 call plug#end()
+
+lua require("cflore")
+lua require'nvim-treesitter.configs'.setup { highlight = { enable = true } }
+
+let g:gruvbox_invert_selection='0'
+let g:gruvbox_contrast_dark = 'hard'
 
 colorscheme gruvbox
 highlight Normal guibg=none
 
-let $FZF_DEFAULT_OPTS='--reverse'
-let g:fzf_colors = {
-\ 'fg':      ['fg', 'Normal'],
-\ 'bg':      ['bg', 'Normal'],
-\ 'hl':      ['fg', 'Comment'],
-\ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
-\ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
-\ 'hl+':     ['fg', 'Statement'],
-\ 'info':    ['fg', 'PreProc'],
-\ 'border':  ['fg', 'Ignore'],
-\ 'prompt':  ['fg', 'Conditional'],
-\ 'pointer': ['fg', 'Exception'],
-\ 'marker':  ['fg', 'Keyword'],
-\ 'spinner': ['fg', 'Label'],
-\ 'header':  ['fg', 'Comment'] }
-
-let g:netrw_banner = 0
-let g:netrw_browse_split = 0
-
-inoremap jj <Esc>
+if executable('rg')
+    let g:rg_derive_root='true'
+endif
 
 let mapleader = " "
 
-nmap <leader>gd <Plug>(coc-definition)
-nmap <leader>gr <Plug>(coc-references)
+inoremap jj <Esc>
 
-nmap <leader>gj :diffget //3<CR>
-nmap <leader>gf :diffget //2<CR>
-nmap <leader>gs :G<CR>
+nnoremap <leader>n :NERDTreeFocus<CR>
+nnoremap <leader>nt :NERDTreeToggle<CR>
 
-nnoremap <C-p> :GFiles<CR>
+nnoremap <leader>u :UndotreeShow<CR>
+nnoremap <leader>m :MaximizerToggle!<CR>
 
-nnoremap <leader>gc :GCheckout<CR>
-
-nnoremap <leader>pv :wincmd v<bar> :Ex <bar> :vertical resize 30<CR>
-
-fun! TrimWhitespace()
-    let l:save = winsaveview()
-    keeppatterns %s/\s\+$//e
-    call winrestview(l:save)
-endfun
-
-augroup trim_whitespace
+augroup cflore
     autocmd!
-    autocmd BufWritePre * :call TrimWhitespace()
+    autocmd BufWritePre * %s/\s\+$//e
+    autocmd BufEnter,BufWinEnter,TabEnter *.rs :lua require'lsp_extensions'.inlay_hints{}
 augroup END
